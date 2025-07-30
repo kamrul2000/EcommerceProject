@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Ecommerce.Models.Product>
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<Ecommerce.Models.Product>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,7 +14,7 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Products Table</h6>
+            <h4 class="m-0 font-weight-bold text-primary text-center">Products Table</h4>
             <a href="/Dashboard/Products/Create" class="btn btn-primary">Add Product</a>
 
         </div>
@@ -50,12 +51,12 @@
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Image)
-            </td>
+                  <img src="@item.Image" width="200"  />          </td>
             <td>
-                                    <a href="/Dashboard/Products/Edit/@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                                    <a href="/Dashboard/Products/Details/@item.Id" class="btn btn-sm btn-info">Details</a>
-                                    <a href="/Dashboard/Products/Delete/@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                                    <a asp-area="Dashboard" asp-controller="Products" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                                    <a asp-area="Dashboard" asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                                    <a asp-area="Dashboard" asp-controller="Products" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+
 
             </td>
         </tr>

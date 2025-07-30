@@ -41,45 +41,64 @@ namespace Ecommerce.Areas.Dashboard.Controllers
 
             return View(product);
         }
-
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-       
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Product product)
+        public async Task<IActionResult> Create(Product product, IFormFile Image)
         {
             if (ModelState.IsValid)
             {
+                if (Image == null)
+                {
+                    return View(product);
+                }
+
+                var imageName = Guid.NewGuid() + Path.GetExtension(Image.FileName);
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "products");
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                var savePath = Path.Combine(folderPath, imageName);
+
+                await using (var stream = new FileStream(savePath, FileMode.Create))
+                {
+                    await Image.CopyToAsync(stream);
+                }
+
+                product.Image = $"/img/products/{imageName}";
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(product);
         }
-
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Dashboard/Products/Edit/4
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
             }
+
             return View(product);
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,Image")] Product product)
+        public async Task<IActionResult> Edit(int id, Product product, IFormFile NewImage)
         {
             if (id != product.Id)
             {
@@ -90,7 +109,41 @@ namespace Ecommerce.Areas.Dashboard.Controllers
             {
                 try
                 {
-                    _context.Update(product);
+                    // Fetch existing product from DB
+                    var existingProduct = await _context.Products.FindAsync(id);
+                    if (existingProduct == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Update basic fields
+                    existingProduct.Name = product.Name;
+                    existingProduct.Description = product.Description;
+                    existingProduct.Price = product.Price;
+
+                    // Handle image upload
+                    if (NewImage != null && NewImage.Length > 0)
+                    {
+                        var imageName = Guid.NewGuid() + Path.GetExtension(NewImage.FileName);
+                        var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "products");
+
+                        if (!Directory.Exists(folderPath))
+                        {
+                            Directory.CreateDirectory(folderPath);
+                        }
+
+                        var savePath = Path.Combine(folderPath, imageName);
+                        await using (var stream = new FileStream(savePath, FileMode.Create))
+                        {
+                            await NewImage.CopyToAsync(stream);
+                        }
+
+                        // Optionally delete old image here
+
+                        existingProduct.Image = $"/img/products/{imageName}";
+                    }
+
+                    _context.Update(existingProduct);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -104,11 +157,15 @@ namespace Ecommerce.Areas.Dashboard.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(product);
+
         }
 
+            
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
