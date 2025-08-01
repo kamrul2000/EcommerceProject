@@ -1,0 +1,97 @@
+﻿@model List<Ecommerce.Models.Cart>
+
+@{
+    ViewData["Title"] = "Your Shopping Cart";
+    decimal subtotal = 0;
+}
+
+<div class="container py-5">
+    <h1 class="mb-5">Your Shopping Cart</h1>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body">
+
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            var totalPrice = item.Product.Price * item.Qty;
+                            subtotal += totalPrice;
+                            <div class="row cart-item mb-3">
+                                <div class="col-md-3">
+                                    <img src="~/images/@item.Product.Image" class="img-fluid rounded" />
+                                </div>
+                                <div class="col-md-5">
+                                    <h5 class="card-title">@item.Product.Name</h5>
+                                    @* <p class="text-muted">Category: @item.Product.Category</p> *@
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="input-group">
+                                        <button class="btn btn-outline-secondary btn-sm" type="button">-</button>
+                                        <input type="text" class="form-control form-control-sm text-center quantity-input" value="@item.Qty" readonly>
+                                        <button class="btn btn-outline-secondary btn-sm" type="button">+</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <p class="fw-bold">$@totalPrice.ToString("0.00")</p>
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <hr />
+                        }
+                    }
+                    else
+                    {
+                        <p>Your cart is empty.</p>
+                    }
+
+                </div>
+            </div>
+
+            <div class="text-start mb-4">
+                <a href="/" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card cart-summary">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Order Summary</h5>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Subtotal</span>
+                        <span>$@subtotal.ToString("0.00")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Shipping</span>
+                        <span>$10.00</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Tax</span>
+                        <span>$@((subtotal * 0.1m).ToString("0.00"))</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <strong>Total</strong>
+                        <strong>$@((subtotal + 10 + (subtotal * 0.1m)).ToString("0.00"))</strong>
+                    </div>
+                    <button class="btn btn-primary w-100">Proceed to Checkout</button>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Apply Promo Code</h5>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Enter promo code">
+                        <button class="btn btn-outline-secondary" type="button">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
