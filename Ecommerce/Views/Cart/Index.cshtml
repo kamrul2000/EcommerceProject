@@ -28,17 +28,22 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="input-group">
-                                        <button class="btn btn-outline-secondary btn-sm" type="button">-</button>
-                                        <input type="text" class="form-control form-control-sm text-center quantity-input" value="@item.Qty" readonly>
-                                        <button class="btn btn-outline-secondary btn-sm" type="button">+</button>
+                                        <button class="btn btn-outline-secondary btn-sm btn-decrease" type="button" data-id="@item.Id">−</button>
+                                        <input type="text" class="form-control form-control-sm text-center quantity-input" id="qty-@item.Id" value="@item.Qty" readonly>
+                                        <button class="btn btn-outline-secondary btn-sm btn-increase" type="button" data-id="@item.Id">+</button>
                                     </div>
                                 </div>
+
                                 <div class="col-md-2 text-end">
                                     <p class="fw-bold">$@totalPrice.ToString("0.00")</p>
-                                    <button class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                                    <form asp-action="Delete" asp-controller="Cart" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure to delete this item?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
                                 </div>
+
                             </div>
                             <hr />
                         }
@@ -95,3 +100,37 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.btn-increase').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            updateQty(id, 1);
+        });
+    });
+
+    document.querySelectorAll('.btn-decrease').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            updateQty(id, -1);
+        });
+    });
+
+    function updateQty(id, delta) {
+        fetch(`/Cart/UpdateQuantity`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({ id: parseInt(id), change: delta })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById(`qty-${id}`).value = data.newQty;
+                location.reload(); // or update price without full reload
+            }
+        });
+    }
+</script>

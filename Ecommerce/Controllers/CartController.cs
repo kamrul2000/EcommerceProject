@@ -47,6 +47,47 @@ namespace Ecommerce.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var cartItem = await _context.Carts.FindAsync(id);
+
+            if (cartItem == null)
+            {
+                return NotFound();
+            }
+
+            _context.Carts.Remove(cartItem);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateQuantity([FromBody] QtyUpdateModel model)
+        {
+            var item = await _context.Carts.FindAsync(model.Id);
+            if (item == null)
+                return Json(new { success = false });
+
+            item.Qty += model.Change;
+
+            if (item.Qty < 1)
+                item.Qty = 1;
+
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, newQty = item.Qty });
+        }
+
+        public class QtyUpdateModel
+        {
+            public int Id { get; set; }
+            public int Change { get; set; } // +1 or -1
+        }
+
+
 
     }
 }
