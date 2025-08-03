@@ -1,4 +1,5 @@
-﻿using Ecommerce.Data;
+﻿using Ecommerce.Areas.Identity.Data;
+using Ecommerce.Data;
 using Ecommerce.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,8 +13,8 @@ namespace Ecommerce.Controllers
     public class CartController : Controller
     {
         public readonly ApplicationDbContext _context;
-        public readonly UserManager<IdentityUser> _userManager;
-        public CartController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public readonly UserManager<EcommerceUser> _userManager;
+        public CartController(ApplicationDbContext context, UserManager<EcommerceUser> userManager)
         {
             _context = context;
             _userManager = userManager;

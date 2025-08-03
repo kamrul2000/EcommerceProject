@@ -22,5 +22,9 @@ namespace Ecommerce.Controllers
             var products = await _context.Products.ToListAsync();
             return View(products);
         }
+        public IActionResult Privacy()
+        {
+            return View(Privacy);
+        }
     }
 }

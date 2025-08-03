@@ -1,4 +1,5 @@
-﻿using Ecommerce.Data;
+﻿using Ecommerce.Areas.Identity.Data;
+using Ecommerce.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,9 +9,9 @@ namespace Ecommerce.ViewComponents
     public class CartItemCountViewComponent : ViewComponent
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<EcommerceUser> _userManager;
 
-        public CartItemCountViewComponent(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public CartItemCountViewComponent(ApplicationDbContext context, UserManager<EcommerceUser> userManager)
         {
             _context = context;
             _userManager = userManager;
