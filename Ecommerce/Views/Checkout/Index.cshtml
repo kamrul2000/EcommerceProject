@@ -1,0 +1,42 @@
+﻿@model List<Ecommerce.Models.Address>
+
+@{
+    ViewData["Title"] = "Shipping Address";
+}
+
+<h2>Select a Shipping Address</h2>
+
+<div class="row">
+    @foreach (var addr in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <form asp-action="SelectAddress" method="post">
+                <input type="hidden" name="addressId" value="@addr.Id" />
+                <div class="card p-3">
+                    <p><strong>@addr.AddressLine</strong></p>
+                    <p>@addr.City, @addr.State</p>
+                    <button type="submit" class="btn btn-success btn-sm">Use this address</button>
+                </div>
+            </form>
+        </div>
+    }
+</div>
+
+<hr />
+
+<h4>Add New Address</h4>
+<form asp-action="SaveAddress" method="post">
+    <div class="form-group">
+        <label>Address Line</label>
+        <input name="AddressLine" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>City</label>
+        <input name="City" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>State</label>
+        <input name="State" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Save Address</button>
+</form>
