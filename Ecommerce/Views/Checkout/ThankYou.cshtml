@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Thank You";
+}
+
+<div class="text-center mt-5">
+    <h2>Thank You for selecting a shipping address!</h2>
+    <p>You can now place your order.</p>
+
+    <form method="post" action="@Url.Action("PlaceOrder", "Checkout")">
+        <button type="submit" class="btn btn-success">Place Order</button>
+    </form>
+
+</div>

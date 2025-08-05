@@ -42,4 +42,22 @@ public class OrderController : Controller
 
         return View(viewModel);
     }
+    public async Task<IActionResult> OrderList()
+    {
+        var user = await _userManager.GetUserAsync(User);
+
+        if (user == null)
+        {
+            return Challenge();
+        }
+
+        var orders = await _context.Orders
+            .Include(o => o.Address)
+            .Where(o => o.UserId == user.Id)
+            .OrderByDescending(o => o.CreatedAt)
+            .ToListAsync();
+
+        return View(orders);
+    }
+
 }

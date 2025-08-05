@@ -1,0 +1,39 @@
+﻿@model List<Ecommerce.Models.Order>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<h2>My Orders</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            @* <th>Customer</th>
+            <th>Phone</th> *@
+            <th>Date</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                @* <td>@order.Address?.FullName</td> <!-- Make sure FullName exists -->
+                <td>@order.Address?.PhoneNumber</td> <!-- Make sure PhoneNumber exists --> *@
+                <td>@order.CreatedAt.ToString("dd MMM yyyy")</td>
+                <td>@order.OrderStatus</td>
+                <td>৳@order.TotalAmount.ToString("N2")</td>
+                <td>
+                    <a href="@Url.Action("OrderSummary", "Order", new { orderId = order.Id })" class="btn btn-primary btn-sm">
+                        View
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

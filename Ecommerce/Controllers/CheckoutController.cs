@@ -19,66 +19,103 @@ public class CheckoutController : Controller
         _userManager = userManager;
     }
 
-    // Show saved addresses to choose from
+    // Step 1: Show list of addresses
     [HttpGet]
     public IActionResult Index()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var addresses = _context.Addresses
-                                .Where(a => a.UserId == userId)
-                                .ToList();
-
-        return View(addresses); // View with list of user addresses
+        var addresses = _context.Addresses.Where(a => a.UserId == userId).ToList();
+        return View(addresses);
     }
 
-    // Save a new address
+    // Step 2: Save new address
     [HttpPost]
     public IActionResult SaveAddress(Address address)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         address.UserId = userId;
-
         _context.Add(address);
         _context.SaveChanges();
 
-        return RedirectToAction("Index");
+        HttpContext.Session.SetInt32("SelectedAddressId", address.Id);
+
+        return RedirectToAction("ThankYou");
     }
 
-    // Select existing address and store in session
+    // Step 3: Select existing address
     [HttpPost]
     public IActionResult SelectAddress(int addressId)
     {
         HttpContext.Session.SetInt32("SelectedAddressId", addressId);
-        return RedirectToAction("OrderSummary");
+        return RedirectToAction("ThankYou");
     }
 
-    // Place order using selected address (or new address if submitted)
-    [HttpPost]
-    public async Task<IActionResult> Index(Address address)
+    // Step 4: Thank You / Review page
+    public IActionResult ThankYou()
     {
-        if (!ModelState.IsValid)
-            return View(address);
+        var addressId = HttpContext.Session.GetInt32("SelectedAddressId");
+        if (addressId == null)
+            return RedirectToAction("Index");
 
+        var address = _context.Addresses.FirstOrDefault(a => a.Id == addressId.Value);
+        if (address == null)
+            return RedirectToAction("Index");
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var cartItems = _context.Carts.Include(c => c.Product)
+                                      .Where(c => c.UserId == userId)
+                                      .ToList();
+
+        var orderItems = cartItems.Select(c => new OrderItem
+        {
+            Product = c.Product,
+            ProductId = c.ProductId,
+            Quantity = c.Qty,
+            UnitPrice = c.Product.Price
+        }).ToList();
+
+        var dummyOrder = new Order
+        {
+            Id = 0,
+            CreatedAt = DateTime.Now,
+            OrderStatus = "Pending",
+            TotalAmount = orderItems.Sum(i => i.Quantity * i.UnitPrice)
+        };
+
+        var viewModel = new OrderSummaryViewModel
+        {
+            ShippingAddress = address,
+            Address = address,
+            OrderItems = orderItems,
+            Order = dummyOrder,
+            Total = dummyOrder.TotalAmount
+        };
+
+        return View("OrderSummary", viewModel);
+    }
+
+    // Step 5: Place Order
+    [HttpPost]
+    public async Task<IActionResult> PlaceOrder()
+    {
         var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-            return Challenge(); // force login
+        if (user == null) return Challenge();
 
-        address.UserId = user.Id;
-        _context.Add(address);
-        await _context.SaveChangesAsync();
+        var addressId = HttpContext.Session.GetInt32("SelectedAddressId");
+        if (addressId == null) return RedirectToAction("Index");
 
-        // Save selected address ID in session for later
-        HttpContext.Session.SetInt32("SelectedAddressId", address.Id);
+        var address = _context.Addresses.FirstOrDefault(a => a.Id == addressId.Value);
+        if (address == null) return RedirectToAction("Index");
 
-        var cartItems = await _context.Carts
-                                      .Include(c => c.Product)
-                                      .Where(c => c.UserId == user.Id)
-                                      .ToListAsync();
+        var cartItems = _context.Carts
+            .Include(c => c.Product)
+            .Where(c => c.UserId == user.Id)
+            .ToList();
 
         if (!cartItems.Any())
         {
-            ModelState.AddModelError("", "Your cart is empty.");
-            return View(address);
+            TempData["Error"] = "Your cart is empty!";
+            return RedirectToAction("Index", "Product");
         }
 
         var order = new Order
@@ -100,64 +137,9 @@ public class CheckoutController : Controller
         _context.Carts.RemoveRange(cartItems);
         await _context.SaveChangesAsync();
 
-        return RedirectToAction("OrderSummary", new { id = order.Id });
-    }
+        // Clear address session if needed
+        HttpContext.Session.Remove("SelectedAddressId");
 
-    // Show the order summary using selected address
-    
-    [HttpGet]
-    [HttpGet]
-    public IActionResult OrderSummary(int? id)
-    {
-        var addressId = HttpContext.Session.GetInt32("SelectedAddressId");
-
-        if (addressId == null)
-        {
-            // Handle missing address id gracefully
-            // e.g., redirect back to checkout or show an error
-            return RedirectToAction("Index", "Checkout");
-        }
-
-        var address = _context.Addresses.FirstOrDefault(a => a.Id == addressId.Value);
-
-        if (address == null)
-        {
-            // Address not found in DB, handle error
-            return RedirectToAction("Index", "Checkout");
-        }
-
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        var cartItems = _context.Carts
-                                .Include(c => c.Product)
-                                .Where(c => c.UserId == userId)
-                                .ToList();
-
-        var orderItems = cartItems.Select(c => new OrderItem
-        {
-            ProductId = c.ProductId,
-            Product = c.Product,
-            Quantity = c.Qty,
-            UnitPrice = c.Product.Price
-        }).ToList();
-
-        var dummyOrder = new Order
-        {
-            Id = 0, // or some default
-            CreatedAt = DateTime.Now,
-            OrderStatus = "Not placed yet",
-            TotalAmount = orderItems.Sum(i => i.Quantity * i.UnitPrice)
-        };
-
-        var viewModel = new OrderSummaryViewModel
-        {
-            ShippingAddress = address,
-            OrderItems = orderItems,
-            Total = dummyOrder.TotalAmount,
-            Order = dummyOrder,
-            Address = address // make sure this is set
-        };
-
-        return View(viewModel);
+        return RedirectToAction("OrderList", "Order");
     }
 }

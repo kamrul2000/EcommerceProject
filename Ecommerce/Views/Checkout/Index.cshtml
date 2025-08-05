@@ -7,16 +7,15 @@
 <h2>Select a Shipping Address</h2>
 
 <div class="row">
-    @foreach (var addr in Model)
+    @foreach (var address in Model)
     {
-        <div class="col-md-4 mb-3">
-            <form asp-action="SelectAddress" method="post">
-                <input type="hidden" name="addressId" value="@addr.Id" />
-                <div class="card p-3">
-                    <p><strong>@addr.AddressLine</strong></p>
-                    <p>@addr.City, @addr.State</p>
-                    <button type="submit" class="btn btn-success btn-sm">Use this address</button>
-                </div>
+        <div class="card mb-2 p-2">
+            <p>@address.AddressLine</p>
+            <p>@address.City, @address.State</p>
+
+            <form method="post" asp-action="SelectAddress" asp-controller="Checkout">
+                <input type="hidden" name="addressId" value="@address.Id" />
+                <button type="submit" class="btn btn-primary">Use this address</button>
             </form>
         </div>
     }
