@@ -4,38 +4,121 @@
     ViewData["Title"] = "Shipping Address";
 }
 
-<h2>Select a Shipping Address</h2>
-
-<div class="row">
-    @foreach (var address in Model)
-    {
-        <div class="card mb-2 p-2">
-            <p>@address.AddressLine</p>
-            <p>@address.City, @address.State</p>
-
-            <form method="post" asp-action="SelectAddress" asp-controller="Checkout">
-                <input type="hidden" name="addressId" value="@address.Id" />
-                <button type="submit" class="btn btn-primary">Use this address</button>
-            </form>
-        </div>
+<style>
+    .address-card {
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: box-shadow 0.3s ease;
+        background-color: #fff;
     }
-</div>
 
-<hr />
+        .address-card:hover {
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
 
-<h4>Add New Address</h4>
-<form asp-action="SaveAddress" method="post">
-    <div class="form-group">
-        <label>Address Line</label>
-        <input name="AddressLine" class="form-control" />
+    .address-details {
+        margin-bottom: 1rem;
+    }
+
+    .btn-use-address {
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+        .btn-use-address:hover {
+            background-color: #0056b3;
+            color: #fff;
+        }
+
+    .btn-remove-address {
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        margin-left: 0.5rem;
+    }
+
+        .btn-remove-address:hover {
+            background-color: #dc3545;
+            color: #fff;
+            border-color: #dc3545;
+        }
+
+    form.add-address-form {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        margin-top: 2rem;
+    }
+
+        form.add-address-form .form-group label {
+            font-weight: 600;
+        }
+
+        form.add-address-form .btn-save-address {
+            border-radius: 50px;
+            padding: 0.6rem 2rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+            form.add-address-form .btn-save-address:hover {
+                background-color: #0056b3;
+                color: #fff;
+            }
+</style>
+
+<section class="container py-5">
+    <h2 class="mb-4">Select a Shipping Address</h2>
+
+    <div class="row">
+        @foreach (var address in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="address-card">
+                    <div class="address-details">
+                        <p class="mb-1 fw-semibold">@address.AddressLine</p>
+                        <p class="mb-2 text-muted">@address.City, @address.State</p>
+                    </div>
+                    <div class="d-flex">
+                        <form method="post" asp-action="SelectAddress" asp-controller="Checkout" class="flex-grow-1">
+                            <input type="hidden" name="addressId" value="@address.Id" />
+                            <button type="submit" class="btn btn-outline-secondary w-100">Use this address</button>
+                        </form>
+
+                        <form method="post" asp-action="RemoveAddress" asp-controller="Checkout" onsubmit="return confirm('Are you sure you want to remove this address?');" class="ms-2">
+                            <input type="hidden" name="addressId" value="@address.Id" />
+                            <button type="submit" class="btn btn-outline-danger">Remove</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        }
     </div>
-    <div class="form-group">
-        <label>City</label>
-        <input name="City" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>State</label>
-        <input name="State" class="form-control" />
-    </div>
-    <button type="submit" class="btn btn-primary mt-2">Save Address</button>
-</form>
+
+    <hr class="my-5" />
+
+    <h4 class="mb-4">Add New Address</h4>
+
+    <form asp-action="SaveAddress" method="post" class="add-address-form">
+        <div class="form-group mb-3">
+            <label>Address Line</label>
+            <input name="AddressLine" class="form-control" placeholder="Enter address line" required />
+        </div>
+        <div class="form-group mb-3">
+            <label>City</label>
+            <input name="City" class="form-control" placeholder="Enter city" required />
+        </div>
+        <div class="form-group mb-3">
+            <label>State</label>
+            <input name="State" class="form-control" placeholder="Enter state" required />
+        </div>
+        <button type="submit" class="btn btn-outline-secondary">Save Address</button>
+    </form>
+</section>

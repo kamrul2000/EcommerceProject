@@ -4,6 +4,95 @@
     ViewData["Title"] = "Your Shopping Cart";
     decimal subtotal = 0;
 }
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+    }
+
+    h1, h5 {
+        font-weight: 600;
+    }
+
+    .card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .cart-item img {
+        border-radius: 10px;
+        max-height: 120px;
+        object-fit: cover;
+    }
+
+    .quantity-input {
+        width: 50px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .btn-outline-secondary {
+        border-color: #999;
+        color: #333;
+        transition: all 0.2s ease;
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+    .btn-outline-danger {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+    .btn-primary {
+        background-color: #343a40;
+        border-color: #343a40;
+    }
+
+        .btn-primary:hover {
+            background-color: #212529;
+        }
+
+    .cart-summary .card-body {
+        background: linear-gradient(to right, #f5f7fa, #c3cfe2);
+        border-radius: 16px;
+    }
+
+    .input-group input {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    .input-group button {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+    hr {
+        border-top: 1px solid #ddd;
+    }
+
+    .text-muted {
+        color: #666 !important;
+    }
+
+
+</style>
 
 <div class="container py-5">
     <h1 class="mb-5">Your Shopping Cart</h1>
@@ -57,10 +146,11 @@
             </div>
 
             <div class="text-start mb-4">
-                <a href="/" class="btn btn-outline-primary">
+                <a href="/" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left me-2"></i>Continue Shopping
                 </a>
             </div>
+
         </div>
 
         <div class="col-lg-4">

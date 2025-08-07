@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 [Authorize]
-    [Area("Dashboard")]
 
 public class OrderController : Controller
 {

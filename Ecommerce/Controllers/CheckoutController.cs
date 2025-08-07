@@ -50,6 +50,25 @@ public class CheckoutController : Controller
         return RedirectToAction("ThankYou");
     }
 
+    // Step 4: Remove address
+    [HttpPost]
+    public IActionResult RemoveAddress(int addressId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var address = _context.Addresses
+            .FirstOrDefault(a => a.Id == addressId && a.UserId == userId);
+
+        if (address != null)
+        {
+            _context.Addresses.Remove(address);
+            _context.SaveChanges();
+        }
+
+        return RedirectToAction("Index"); // Or wherever your list is shown
+    }
+
+
     // Step 4: Thank You / Review page
     public IActionResult ThankYou()
     {
