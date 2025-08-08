@@ -10,8 +10,8 @@
     <thead class="table-dark">
         <tr>
             <th scope="col">Order ID</th>
-            @* <th scope="col">Customer</th>
-            <th scope="col">Phone</th> *@
+            <th scope="col">Customer</th>
+            <th scope="col">Phone</th>
             <th scope="col">Date</th>
             <th scope="col">Status</th>
             <th scope="col" class="text-end">Total</th>
@@ -23,8 +23,8 @@
         {
             <tr>
                 <td>@order.Id</td>
-                @* <td>@order.Address?.FullName</td>
-                <td>@order.Address?.PhoneNumber</td> *@
+                <td>@order.User?.FullName</td>
+                <td>@order.User?.PhoneNumber</td>
                 <td>@order.CreatedAt.ToString("dd MMM yyyy")</td>
                 <td>
                     @* Use Bootstrap badges for status *@

@@ -13,11 +13,11 @@ namespace Ecommerce.Areas.Identity.Data
     {
         [Required]
         [MaxLength(50)]
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = null!;  // Use null-forgiving operator for EF Core
 
         [Required]
         [MaxLength(50)]
-        public string LastName { get; set; }
+        public string LastName { get; set; } = null!;
 
         [NotMapped]
         public string FullName => $"{FirstName} {LastName}";

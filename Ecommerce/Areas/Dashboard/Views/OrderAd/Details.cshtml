@@ -1,0 +1,41 @@
+﻿@model Ecommerce.Models.Order
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h2>Order #@Model.Id</h2>
+<hr />
+
+<h4>Customer Information</h4>
+<p><strong>Name:</strong> @Model.User?.FullName</p>
+<p><strong>Email:</strong> @Model.User?.Email</p>
+<p><strong>Phone:</strong> @Model.User?.PhoneNumber</p>
+<p><strong>Address:</strong> @Model.Address?.AddressLine, @Model.Address?.City, @Model.Address?.State</p>
+
+<h4>Order Information</h4>
+<p><strong>Date:</strong> @Model.CreatedAt.ToString("dd MMM yyyy")</p>
+<p><strong>Status:</strong> @Model.OrderStatus</p>
+<p><strong>Total Amount:</strong> ৳@Model.TotalAmount.ToString("N2")</p>
+
+<h4>Products</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th class="text-end">Price</th>
+            <th class="text-center">Qty</th>
+            <th class="text-end">Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderItems)
+        {
+            <tr>
+                <td>@item.Product?.Name</td>
+                <td class="text-end">৳@item.UnitPrice.ToString("N2")</td>
+                <td class="text-center">@item.Quantity</td>
+                <td class="text-end">৳@(item.Quantity* item.UnitPrice).ToString("N2")</td>
+            </tr>
+        }
+    </tbody>
+</table>

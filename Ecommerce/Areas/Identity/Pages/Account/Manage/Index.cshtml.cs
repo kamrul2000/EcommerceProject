@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Ecommerce.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
@@ -23,7 +20,8 @@ namespace Ecommerce.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
-        public string Username { get; set; }
+        // To display Email as readonly
+        public string Email { get; set; }
 
         [TempData]
         public string StatusMessage { get; set; }
@@ -33,20 +31,19 @@ namespace Ecommerce.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
-            [Display(Name = "UserName")]
-            public string UserName { get; set; }
+            [Phone]
+            [Display(Name = "Phone Number")]
+            public string PhoneNumber { get; set; }
         }
 
         private async Task LoadAsync(EcommerceUser user)
         {
-            var userName = await _userManager.GetUserNameAsync(user);
+            Email = await _userManager.GetEmailAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
-            Username = userName;
 
             Input = new InputModel
             {
-                UserName = phoneNumber
+                PhoneNumber = phoneNumber
             };
         }
 
@@ -54,9 +51,7 @@ namespace Ecommerce.Areas.Identity.Pages.Account.Manage
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-            {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
 
             await LoadAsync(user);
             return Page();
@@ -66,9 +61,7 @@ namespace Ecommerce.Areas.Identity.Pages.Account.Manage
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-            {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
 
             if (!ModelState.IsValid)
             {
@@ -77,9 +70,9 @@ namespace Ecommerce.Areas.Identity.Pages.Account.Manage
             }
 
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.UserName != phoneNumber)
+            if (Input.PhoneNumber != phoneNumber)
             {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.UserName);
+                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
                 if (!setPhoneResult.Succeeded)
                 {
                     StatusMessage = "Unexpected error when trying to set phone number.";

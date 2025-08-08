@@ -56,8 +56,10 @@ namespace Ecommerce.Areas.Identity.Pages.Account
 
             [Required]
             [Phone]
+            [DataType(DataType.PhoneNumber)]
             [Display(Name = "Phone Number")]
             public string PhoneNumber { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -75,6 +77,7 @@ namespace Ecommerce.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
         }
 
+
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
@@ -85,15 +88,32 @@ namespace Ecommerce.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if (ModelState.IsValid)
             {
-                var user = new EcommerceUser { 
-                    FirstName=Input.FirstName, LastName=Input.LastName,
-                    PhoneNumber = Input.PhoneNumber,
-                    UserName = Input.Email, Email = Input.Email };
+                var user = new EcommerceUser
+                {
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
+                    UserName = Input.Email,
+                    Email = Input.Email
+                };
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
+                    // Set phone number separately, using UserManager
+                    if (!string.IsNullOrEmpty(Input.PhoneNumber))
+                    {
+                        var phoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+                        if (!phoneResult.Succeeded)
+                        {
+                            foreach (var error in phoneResult.Errors)
+                                ModelState.AddModelError(string.Empty, error.Description);
+                            return Page();
+                        }
+                    }
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -126,5 +146,6 @@ namespace Ecommerce.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
     }
 }

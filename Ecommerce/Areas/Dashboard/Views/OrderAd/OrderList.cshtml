@@ -1,0 +1,54 @@
+﻿@model List<Ecommerce.Models.Order>
+@{
+    ViewData["Title"] = "All Orders";
+}
+
+<h2 class="mb-4">All Orders</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<table class="table table-striped table-hover align-middle shadow-sm rounded">
+    <thead class="table-dark">
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Email</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th class="text-end">Total</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.User.FullName</td>
+                <td>@order.User?.Email</td>
+                <td>@order.CreatedAt.ToString("dd MMM yyyy")</td>
+                <td>
+                    <form asp-action="UpdateStatus" asp-controller="OrderAd" asp-area="Dashboard" method="post" class="d-flex align-items-center">
+                        <input type="hidden" name="id" value="@order.Id" />
+                        <select name="status" class="form-select form-select-sm me-2">
+                            <option value="Pending" selected="@("Pending" == order.OrderStatus)">Pending</option>
+                            <option value="Completed" selected="@("Completed" == order.OrderStatus)">Completed</option>
+                            <option value="Cancelled" selected="@("Cancelled" == order.OrderStatus)">Cancelled</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                    </form>
+                </td>
+                <td class="text-end">৳@order.TotalAmount.ToString("N2")</td>
+                <td class="text-center">
+                    <a href="@Url.Action("Details", "OrderAd", new { area = "Dashboard", id = order.Id })"
+                       class="btn btn-outline-secondary btn-sm px-3">
+                        View
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
