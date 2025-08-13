@@ -9,8 +9,8 @@ namespace Ecommerce.Models
         public EcommerceUser User { get; set; }
 
         public DateTime CreatedAt { get; set; }
+        public string PaymentTransactionId { get; set; }
 
-       
         public string OrderStatus { get; set; } 
         public decimal TotalAmount { get; set; }
        public int AddressId { get; set; }

@@ -46,7 +46,7 @@ namespace Ecommerce.Controllers
             var cart = new Cart { ProductId = productId, Qty = qty, UserId = currentuser.Id };
             _context.Add(cart);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
         [HttpPost]
         public async Task<IActionResult> Delete(int id)

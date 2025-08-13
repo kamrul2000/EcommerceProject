@@ -46,8 +46,17 @@
     <!-- Total and Go Order -->
     <div class="d-flex justify-content-between align-items-center">
         <h4>Total: $@Model.Total</h4>
-        <form method="post" asp-action="PlaceOrder" asp-controller="Checkout">
-            <button type="submit" class="btn btn-outline-secondary">Go Order</button>
-        </form>
+
+        <div class="d-flex gap-2">
+            <!-- Buttons grouped together -->
+            <form method="post" asp-action="PayOnline" asp-controller="Checkout">
+                <button type="submit" class="btn btn-outline-secondary">Make Payment</button>
+            </form>
+            <form method="post" asp-action="PlaceOrder" asp-controller="Checkout">
+                <button type="submit" class="btn btn-outline-secondary">Go Order With Cash On Delivery</button>
+            </form>
+           
+        </div>
     </div>
+
 </div>
