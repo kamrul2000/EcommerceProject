@@ -44,9 +44,13 @@
 
             <h4 class="mb-3">Shipping Address</h4>
             <div class="mb-4">
-                <p class="mb-0">@Model.Address.AddressLine</p>
-                <p class="mb-0">@Model.Address.City</p>
-                <p class="mb-0">@Model.Address.State</p>
+                <p class="mb-0">@Model.Address.CustomerName</p>
+                <p class="mb-0">@Model.Address.Phone</p>
+                <p class="mb-0">@Model.Address.Email</p>
+                <p class="mb-0">@Model.Address.AddressDescription</p>
+                <p class="mb-0">@Model.Address.Upzila</p>
+                <p class="mb-0">@Model.Address.District</p>
+
             </div>
 
             <hr />
@@ -69,7 +73,7 @@
                                 <td class="text-start">@item.Product.Name</td>
                                 <td>৳@item.UnitPrice.ToString("N2")</td>
                                 <td>@item.Quantity</td>
-                                <td>৳@(item.UnitPrice* item.Quantity).ToString("N2")</td>
+                                <td>৳@((item.UnitPrice* item.Quantity).ToString("N2"))</td>
                             </tr>
                         }
                     </tbody>

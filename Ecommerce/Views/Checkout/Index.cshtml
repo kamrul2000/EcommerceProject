@@ -82,8 +82,11 @@
             <div class="col-md-6 col-lg-4">
                 <div class="address-card">
                     <div class="address-details">
-                        <p class="mb-1 fw-semibold">@address.AddressLine</p>
-                        <p class="mb-2 text-muted">@address.City, @address.State</p>
+                        <p class="mb-1">Name: @address.CustomerName</p>
+                        <p class="mb-1"> Phone: @address.Phone</p>
+                        <p class="mb-1">Email:@address.Email</p>
+                        <p class="mb-1">C Address Description:@address.AddressDescription</p>
+                        <p class="mb-2 ">Location:@address.Upzila,@address.District</p>
                     </div>
                     <div class="d-flex">
                         <form method="post" asp-action="SelectAddress" asp-controller="Checkout" class="flex-grow-1">
@@ -108,17 +111,29 @@
 
     <form asp-action="SaveAddress" method="post" class="add-address-form">
         <div class="form-group mb-3">
-            <label>Address Line</label>
-            <input name="AddressLine" class="form-control" placeholder="Enter address line" required />
+            <label>Customer Name</label>
+            <input name="CustomerName" class="form-control" placeholder="Enter Your Name" required />
         </div>
         <div class="form-group mb-3">
-            <label>City</label>
-            <input name="City" class="form-control" placeholder="Enter city" required />
+            <label>Phone</label>
+            <input name="Phone" class="form-control" placeholder="Enter Your Phone Number" required />
         </div>
         <div class="form-group mb-3">
-            <label>State</label>
-            <input name="State" class="form-control" placeholder="Enter state" required />
+            <label>Email</label>
+            <input name="Email" class="form-control" placeholder="Enter Your Email Address" required />
         </div>
+        <div class="form-group mb-3">
+            <label>Upzila</label>
+            <input name="Upzila" class="form-control" placeholder="Enter Your Upzila" required />
+        </div>
+        <div class="form-group mb-3">
+            <label>District</label>
+            <input name="District" class="form-control" placeholder="Enter Your District" required />
+        </div>
+        <div class="form-group mb-3">
+            <label>Address Description</label>
+            <input name="AddressDescription" class="form-control" placeholder="Enter Your Road/Holding" required />
+        </div>     
         <button type="submit" class="btn btn-outline-secondary">Save Address</button>
     </form>
 </section>

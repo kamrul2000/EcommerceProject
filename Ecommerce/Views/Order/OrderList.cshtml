@@ -23,8 +23,8 @@
         {
             <tr>
                 <td>@order.Id</td>
-                <td>@order.User?.FullName</td>
-                <td>@order.User?.PhoneNumber</td>
+                <td>@order.Address?.CustomerName</td>
+                <td>@order.Address?.Phone</td>
                 <td>@order.CreatedAt.ToString("dd MMM yyyy")</td>
                 <td>
                     @* Use Bootstrap badges for status *@

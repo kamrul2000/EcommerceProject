@@ -212,7 +212,8 @@ public class CheckoutController : Controller
 {
     { "total_amount", order.TotalAmount.ToString("0.00") },
     { "tran_id", tranId },
-    { "success_url", $"{baseUrl}/Checkout/CheckoutConfirmation" },
+    //{ "success_url", $"{baseUrl}/Checkout/CheckoutConfirmation" },
+    { "success_url", $"{baseUrl}/Checkout/PaymentSuccess?tran_id={tranId}" },
     { "fail_url",    $"{baseUrl}/Checkout/CheckoutFail" },
     { "cancel_url",  $"{baseUrl}/Checkout/CheckoutCancel" },
     { "version", "3.00" },
@@ -264,22 +265,72 @@ public class CheckoutController : Controller
     }
 
     // ---------- SSLCommerz: Success Callback ----------
+    //[HttpPost]
+    //[AllowAnonymous]
+
+    //public IActionResult CheckoutConfirmation()
+    //{
+    //    if (!string.IsNullOrEmpty(Request.Form["status"]) && Request.Form["status"] == "VALID")
+    //    {
+    //        ViewBag.SuccessInfo = "Payment successful!";
+    //    }
+    //    else
+    //    {
+    //        ViewBag.SuccessInfo = "There was some error while processing your payment. Please try again.";
+    //    }
+
+    //    return View();
+    //}
+    // Called by SSLCommerz server-to-server for confirmation
     [HttpPost]
     [AllowAnonymous]
-
+    [IgnoreAntiforgeryToken] // avoid CSRF issues from external POST
     public IActionResult CheckoutConfirmation()
     {
-        if (!string.IsNullOrEmpty(Request.Form["status"]) && Request.Form["status"] == "VALID")
+        var status = Request.Form["status"];
+        var tranId = Request.Form["tran_id"];
+
+        if (string.Equals(status, "VALID", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(tranId))
         {
-            ViewBag.SuccessInfo = "Payment successful!";
-        }
-        else
-        {
-            ViewBag.SuccessInfo = "There was some error while processing your payment. Please try again.";
+            var order = _context.Orders.FirstOrDefault(o => o.PaymentTransactionId == tranId);
+            if (order != null && order.OrderStatus != "Paid")
+            {
+                order.OrderStatus = "Paid";
+                _context.SaveChanges();
+            }
         }
 
-        return View();
+        return RedirectToAction("PaymentSuccess", new { tran_id = tranId });
     }
+    [HttpGet, HttpPost]
+    [AllowAnonymous] // allow gateway to hit it without login
+    [IgnoreAntiforgeryToken] // avoid token errors on POST
+    public IActionResult PaymentSuccess(string tran_id)
+    {
+        if (string.IsNullOrEmpty(tran_id))
+            tran_id = Request.Form["tran_id"];
+
+        var order = _context.Orders
+            .FirstOrDefault(o => o.PaymentTransactionId == tran_id);
+
+        if (order != null && order.OrderStatus != "Paid")
+        {
+            order.OrderStatus = "Paid";
+
+            // Clear cart
+            var cartItems = _context.Carts.Where(c => c.UserId == order.UserId).ToList();
+            _context.Carts.RemoveRange(cartItems);
+
+            _context.SaveChanges();
+        }
+
+        // Optional: If the customer is logged in, you can redirect to their order list
+        // Otherwise, show a public "Payment successful" page
+        return RedirectToAction("OrderList", "Order");
+    }
+
+
+
 
     // ---------- SSLCommerz: Fail/Cancel Callbacks ----------
     [HttpPost]

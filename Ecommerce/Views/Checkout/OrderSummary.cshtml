@@ -13,9 +13,13 @@
         </div>
         <div class="card-body">
             <p class="mb-0">
-                @Model.Address.AddressLine<br />
-                @Model.Address.City, @Model.Address.State
+                Customer Name: @Model.Address.CustomerName<br />
+                Phone: @Model.Address.Phone<br />
+                Email: @Model.Address.Email<br />
+                Address: @Model.Address.AddressDescription<br />
+                Location: @Model.Address.Upzila, @Model.Address.District
             </p>
+
         </div>
     </div>
 
@@ -35,7 +39,7 @@
                         Quantity: @item.Quantity
                     </div>
                     <div class="col-md-3 text-end">
-                        Price: $@item.UnitPrice
+                        Price: ৳@item.UnitPrice
                     </div>
                 </div>
                 <hr />
@@ -45,7 +49,7 @@
 
     <!-- Total and Go Order -->
     <div class="d-flex justify-content-between align-items-center">
-        <h4>Total: $@Model.Total</h4>
+        <h4>Total: ৳@Model.Total</h4>
 
         <div class="d-flex gap-2">
             <!-- Buttons grouped together -->
