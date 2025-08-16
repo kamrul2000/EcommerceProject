@@ -1,8 +1,25 @@
-﻿@model List<Ecommerce.Models.Product>
+﻿<style>
+    .card-img-container {
+        height: 200px; /* fixed image container height */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa; /* light gray background for empty space */
+    }
 
-@{
-    ViewData["Title"] = "Home Page";
-}
+    .card-img-top {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain; /* fully visible image */
+    }
+
+    .card-body {
+        min-height: 100px; /* optional: uniform text area */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+</style>
 
 <section class="py-5">
     <div class="container px-4 px-lg-5 mt-5">
@@ -11,30 +28,25 @@
             {
                 <div class="col mb-5">
                     <div class="card h-100">
-                        <!-- Product image-->
-                        <img class="card-img-top" src="@product.Image" alt="Product Image" />
-
-
-                        <!-- Product details-->
-                        <div class="card-body p-4">
-                            <div class="text-center">
-                                <!-- Product name-->
+                        <!-- Link wrapper for entire card except Add to Cart button -->
+                        <a asp-controller="Home" asp-action="Details" asp-route-id="@product.Id"
+                           class="text-decoration-none text-dark d-block">
+                            <div class="card-img-container">
+                                <img class="card-img-top" src="@product.Image" alt="@product.Name" />
+                            </div>
+                            <div class="card-body p-4 d-flex flex-column justify-content-between text-center">
                                 <h5 class="fw-bolder">@product.Name</h5>
-                                <!-- Product price-->
-                                <span>৳@product.Price</span>
+                                <span>@product.Price.ToString("C")</span>
                             </div>
-                        </div>
+                        </a>
 
-                        <!-- Product actions-->
-                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center">
-                                <a class="btn btn-outline-dark mt-auto"
-                                   asp-controller="Cart"
-                                   asp-action="AddToCart"
-                                   asp-route-productId="@product.Id">
-                                    Add to cart
-                                </a>
-                            </div>
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                <input type="hidden" name="productId" value="@product.Id" />
+                                <button type="submit" class="btn btn-outline-dark mt-auto">
+                                    <i class="bi-cart-fill me-1"></i> Add to cart
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

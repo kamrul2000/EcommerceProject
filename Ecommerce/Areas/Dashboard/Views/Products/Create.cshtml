@@ -14,6 +14,14 @@
         <div class="card-body">
             <form asp-action="Create" asp-controller="Products" asp-area="Dashboard" method="post" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
+                <div class="mb-3">
+                    <label for="Category" class="form-label">Category</label>
+                    <select name="Category" class="form-control" required>
+                        <option value="All">All Products</option>
+                        <option value="Popular">Popular Items</option>
+                        <option value="New">New Arrivals</option>
+                    </select>
+                </div>
 
                 <div class="mb-3">
                     <label for="Name" class="form-label">Product Name</label>
